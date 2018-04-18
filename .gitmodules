@@ -1,0 +1,6 @@
+[submodule "mftm-database"]
+	path = mftm-database
+	url = https://github.com/brangerbriz/mftm-database.git
+[submodule "mftm-backend"]
+	path = mftm-backend
+	url = https://github.com/brangerbriz/mftm-backend.git
