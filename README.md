@@ -51,7 +51,7 @@ You may optionally create a new MySQL user to interface with the `messages_from_
 
 ### Setting up the `mftm-backend` Node.js server
 
-Once you've configured the MySQL database, detailed instructions to setup the backend server can be found in the [`mftm-backend/README.md`](mftm-backend/README.md) file. You should now follow those instructions before returning here.
+Once you've configured the MySQL database, detailed instructions to setup the backend server can be found in the [`mftm-backend/README.md`](https://github.com/brangerbriz/mftm-backend) file. You should now follow those instructions before returning here.
 
 ## Run
 
