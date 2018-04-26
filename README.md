@@ -26,7 +26,7 @@ git submodule update --init --recursive
 
 # you will notice that there are 4 submodules, two in the parent
 # repo, each that contains one additional submodule.
-git submodule status
+git submodule status --recursive
 ```
 
 These install instructions are for Ubuntu 16.04. Other OSes may work but are not officially supported: here be dragons.
@@ -42,9 +42,15 @@ sudo apt install mysql-server mysql-workbench
 Now download the latest `messages_from_the_mines` database backup from [here (direct download)](https://github.com/brangerbriz/mftm-database/releases/download/data/latest.sql.gz). Unzip that file and you should get an `.sql` file like `2018-04-18.sql`.
 
 ```bash
+# download the latest version of the database
+curl -L https://github.com/brangerbriz/mftm-database/releases/download/data/latest.sql.gz > latest.sql.gz
+
+# unzip it
+gunzip latest.sql.gz
+
 # import the database backup (be sure to use the correct path to your database file)
 # this will create a new Database schema called messages_from_the_mines
-mysql -u root -p < 2018-04-18.sql
+mysql -u root -p < latest.sql
 ```
 
 You may optionally create a new MySQL user to interface with the `messages_from_the_mines` database only. This is probably a good idea, as you have to save your database username/password in plaintext in `mftm-backend/config.json` and `mftm-database/config.json` (if actually want to parse the blockchain from this computer). This process is trivial using MySQL Workbench. Just be sure that your new user has full access permissions to the `messages_from_the_mines` database schema.
