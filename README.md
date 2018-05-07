@@ -22,7 +22,7 @@ git clone https://github.com/brangerbriz/messages-from-the-mines
 cd messages-from-the-mines
 
 # recursively init and download the submodules
-git submodule update --init --recursive
+git submodule update --init --recursive --remote
 
 # you will notice that there are 4 submodules, two in the parent
 # repo, each that contains one additional submodule.
