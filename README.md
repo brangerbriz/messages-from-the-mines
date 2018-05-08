@@ -21,6 +21,11 @@ This repository is comprised entirely of git submodules of other repositories.
 git clone https://github.com/brangerbriz/messages-from-the-mines
 cd messages-from-the-mines
 
+# if you are on this branch we assume you want to install the web version
+# of the project (not the physical installation version).
+git checkout -b web
+git pull origin web
+
 # recursively init and download the submodules
 git submodule update --init --recursive --remote
 
