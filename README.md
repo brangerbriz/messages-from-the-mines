@@ -8,7 +8,46 @@ Our project looks at the Bitcoin blockchain not from the traditional perspective
 
 For more information about about the project, see [this large poster](.images/banner.png). 
 
-## Install
+## Docker Install
+
+The web version of this project can be installed via Docker using the `web-docker` branch by following the instructions below.
+
+```bash
+git clone https://github.com/brangerbriz/messages-from-the-mines
+cd messages-from-the-mines
+git checkout web-docker
+git submodule update --init --recursive
+
+# open .env in a text editor and create and add a password for
+# BASIC_AUTH_PASSWORD and MYSQL_ROOT_PASSWORD
+nano .env
+
+# launch the nginx http proxy running on port 80. We'll need this to get
+# an HTTPS certificate.
+docker-compose up -d http-proxy
+
+# create an HTTPS/SSL/TLS certificate with Let's Encrypt
+DOMAIN=example.org EMAIL=email@example.org ./scripts/create_cert.sh
+
+# if this errors with "ERROR: No containers to restart", that's fine
+DOMAIN=example.org DOCKER_USER=$USER ./scripts/reload_cert.sh
+
+docker-compose up -d
+
+# enter the password value you just created for MYSQL_ROOT_PASSWORD in .env when prompted
+docker-compose exec db sh -c "mysql -u root -p < /latest-web.sql && rm /latest-web.sql"
+```
+
+```bash
+# add a root cronjob
+sudo crontab -e 
+
+# past these contents (and replace the placeholder vars). 
+# Each day at 7PM attempt to renew the HTTPS certificate and reboot the node server
+0 19 * * * ./scripts/renew_cert.sh && DOMAIN=example.org DOCKER_USER=example-user ./scripts/reload_cert.sh
+```
+
+## Manual Install
 
 This repository is comprised entirely of git submodules of other repositories. 
 
@@ -98,45 +137,6 @@ firefox mftm-backend/www/mftm-frontend/index.html
 ```
 
 Sorry folks, that's just the way it goes sometimes.
-
-## Docker Install
-
-The web version of this project can be installed via Docker using the `web-docker` branch by following the instructions below.
-
-```bash
-git clone https://github.com/brangerbriz/messages-from-the-mines
-cd messages-from-the-mines
-git checkout web-docker
-git submodule update --init --recursive
-
-# open .env in a text editor and create and add a password for
-# BASIC_AUTH_PASSWORD and MYSQL_ROOT_PASSWORD
-nano .env
-
-# launch the nginx http proxy running on port 80. We'll need this to get
-# an HTTPS certificate.
-docker-compose up -d http-proxy
-
-# create an HTTPS/SSL/TLS certificate with Let's Encrypt
-DOMAIN=example.org EMAIL=email@example.org ./scripts/create_cert.sh
-
-# if this errors with "ERROR: No containers to restart", that's fine
-DOMAIN=example.org DOCKER_USER=$USER ./scripts/reload_cert.sh
-
-docker-compose up -d
-
-# enter the password value you just created for MYSQL_ROOT_PASSWORD in .env when prompted
-docker-compose exec db sh -c "mysql -u root -p < /latest-web.sql && rm /latest-web.sql"
-```
-
-```bash
-# add a root cronjob
-sudo crontab -e 
-
-# past these contents (and replace the placeholder vars). 
-# Each day at 7PM attempt to renew the HTTPS certificate and reboot the node server
-0 19 * * * ./scripts/renew_cert.sh && DOMAIN=example.org DOCKER_USER=example-user ./scripts/reload_cert.sh
-```
 
 ## More Info
 
