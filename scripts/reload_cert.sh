@@ -8,7 +8,7 @@ fi
 
 sudo cp "${DIR}/../letsencrypt/live/${DOMAIN}/fullchain.pem" "${DIR}/../ssl/certificate.crt"
 sudo cp "${DIR}/../letsencrypt/live/${DOMAIN}/privkey.pem" "${DIR}/../ssl/private.key"
-sudo chown $USER:$USER "${DIR}/../certificate.crt"
-sudo chown $USER:$USER "${DIR}/../private.key"
+sudo chown $USER:$USER "${DIR}/../ssl/certificate.crt"
+sudo chown $USER:$USER "${DIR}/../ssl/private.key"
 
 docker-compose restart node 

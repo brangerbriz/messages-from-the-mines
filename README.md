@@ -121,12 +121,21 @@ docker-compose up -d http-proxy
 DOMAIN=example.org EMAIL=email@example.org ./scripts/create_cert.sh
 
 # if this errors with "ERROR: No containers to restart", that's fine
-DOCKER_USER=$USER ./scripts/reload_cert.sh
+DOMAIN=example.org DOCKER_USER=$USER ./scripts/reload_cert.sh
 
 docker-compose up -d
 
 # enter the password value you just created for MYSQL_ROOT_PASSWORD in .env when prompted
 docker-compose exec db sh -c "mysql -u root -p < /latest-web.sql && rm /latest-web.sql"
+```
+
+```bash
+# add a root cronjob
+sudo crontab -e 
+
+# past these contents (and replace the placeholder vars). 
+# Each day at 7PM attempt to renew the HTTPS certificate and reboot the node server
+0 19 * * * ./scripts/renew_cert.sh && DOMAIN=example.org DOCKER_USER=example-user ./scripts/reload_cert.sh
 ```
 
 ## More Info
