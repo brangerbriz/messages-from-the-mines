@@ -113,35 +113,20 @@ git submodule update --init --recursive
 # BASIC_AUTH_PASSWORD and MYSQL_ROOT_PASSWORD
 nano .env
 
+# launch the nginx http proxy running on port 80. We'll need this to get
+# an HTTPS certificate.
 docker-compose up -d http-proxy
 
-DOMAIN=example.org
-EMAIL=email@example.org
-docker run \
-    -v "$(pwd)/ssl:/var/www/letsencrypt" \
-    -v "$(pwd)/letsencrypt:/etc/letsencrypt"\
-    --rm certbot/certbot \
-    certonly --webroot --non-interactive \
-    --email "$EMAIL" \
-    --agree-tos \
-    -w /var/www/letsencrypt \
-    -d "$DOMAIN"
+# create an HTTPS/SSL/TLS certificate with Let's Encrypt
+DOMAIN=example.org EMAIL=email@example.org ./scripts/create_cert.sh
 
 # if this errors with "ERROR: No containers to restart", that's fine
-DOCKER_USER=$USER ./scripts/reload_certs.sh
+DOCKER_USER=$USER ./scripts/reload_cert.sh
 
 docker-compose up -d
 
 # enter the password value you just created for MYSQL_ROOT_PASSWORD in .env when prompted
 docker-compose exec db sh -c "mysql -u root -p < /latest-web.sql && rm /latest-web.sql"
-```
-
-```
-docker run \
-    -v "$(pwd)/ssl:/var/www/letsencrypt" \
-    -v "$(pwd)/letsencrypt:/etc/letsencrypt"\
-    --rm certbot/certbot \
-    renew
 ```
 
 ## More Info

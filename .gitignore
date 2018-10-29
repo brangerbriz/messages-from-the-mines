@@ -2,3 +2,6 @@ mysql-data/*
 !mysql-data/.gitkeep
 ssl/*
 !ssl/.gitkeep
+letsencrypt/*
+!letsencrypt/.gitkeep
+
