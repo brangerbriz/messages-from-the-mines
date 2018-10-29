@@ -99,6 +99,23 @@ firefox mftm-backend/www/mftm-frontend/index.html
 
 Sorry folks, that's just the way it goes sometimes.
 
+## Docker Install
+
+The web version of this project can be installed via Docker using the `web-docker` branch by following the instructions below.
+
+```bash
+git clone --recursive https://github.com/brangerbriz/messages-from-the-mines
+cd messages-from-the-mines
+git checkout web-docker
+
+# open .env in a text editor and create and add a password for
+# BASIC_AUTH_PASSWORD and MYSQL_ROOT_PASSWORD
+nano .env
+
+docker-compose up -d
+docker-compose exec db sh -c "mysql -u root -p < /latest-web.sql && rm /latest-web.sql"
+```
+
 ## More Info
 
 ![Messages from the Mines Banner/Poster](.images/banner.png)

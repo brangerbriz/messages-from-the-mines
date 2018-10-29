@@ -1,0 +1,36 @@
+version: '3'
+services:
+  db:
+    build: 
+      context: .
+      dockerfile: db.Dockerfile
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+    volumes:
+      - "./mysql-data:/var/lib/mysql"
+    restart: unless-stopped
+  node:
+    build: 
+      context: .
+      dockerfile: node.Dockerfile
+      args:
+        - "BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD}"
+        - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+        - "MYSQL_USER=${MYSQL_USER}"
+        - "HTTPS_PORT=${HTTPS_PORT}"
+    volumes:
+      - "./ssl:/mftm-backend/ssl"
+    depends_on:
+      - db
+    ports:
+      - "${HTTPS_PORT}:${HTTPS_PORT}"
+    restart: unless-stopped
+  http-proxy:
+    build:
+      context: .
+      dockerfile: http-proxy.Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - "./ssl:/var/www/letsencrypt"
+    restart: unless-stopped
