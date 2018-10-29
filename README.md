@@ -104,16 +104,44 @@ Sorry folks, that's just the way it goes sometimes.
 The web version of this project can be installed via Docker using the `web-docker` branch by following the instructions below.
 
 ```bash
-git clone --recursive https://github.com/brangerbriz/messages-from-the-mines
+git clone https://github.com/brangerbriz/messages-from-the-mines
 cd messages-from-the-mines
 git checkout web-docker
+git submodule update --init --recursive
 
 # open .env in a text editor and create and add a password for
 # BASIC_AUTH_PASSWORD and MYSQL_ROOT_PASSWORD
 nano .env
 
+docker-compose up -d http-proxy
+
+DOMAIN=example.org
+EMAIL=email@example.org
+docker run \
+    -v "$(pwd)/ssl:/var/www/letsencrypt" \
+    -v "$(pwd)/letsencrypt:/etc/letsencrypt"\
+    --rm certbot/certbot \
+    certonly --webroot --non-interactive \
+    --email "$EMAIL" \
+    --agree-tos \
+    -w /var/www/letsencrypt \
+    -d "$DOMAIN"
+
+# if this errors with "ERROR: No containers to restart", that's fine
+DOCKER_USER=$USER ./scripts/reload_certs.sh
+
 docker-compose up -d
+
+# enter the password value you just created for MYSQL_ROOT_PASSWORD in .env when prompted
 docker-compose exec db sh -c "mysql -u root -p < /latest-web.sql && rm /latest-web.sql"
+```
+
+```
+docker run \
+    -v "$(pwd)/ssl:/var/www/letsencrypt" \
+    -v "$(pwd)/letsencrypt:/etc/letsencrypt"\
+    --rm certbot/certbot \
+    renew
 ```
 
 ## More Info
